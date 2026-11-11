@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخزندار | برنامج المبيعات</title>
+<style>
+:root{--navy:#14263d;--blue:#2463a6;--gold:#e4ad45;--bg:#f3f6fa;--ink:#1c2938;--muted:#718096;--line:#e3e9f0;--green:#198754;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(120deg,#14263d,#234d76);color:white;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;border-radius:14px;background:var(--gold);color:#17283d;display:grid;place-items:center;font-size:25px;font-weight:bold}.brand h1{margin:0;font-size:25px}.brand p{margin:5px 0 0;color:#d4dfeb;font-size:13px}
+header .date{font-size:13px;color:#e4edf7}
+nav{display:flex;gap:8px;padding:12px 18px;background:white;border-bottom:1px solid var(--line);overflow:auto}
+nav button{border:0;background:#edf2f7;color:#31445b;padding:11px 17px;border-radius:9px;font:inherit;white-space:nowrap;cursor:pointer}
+nav button.active{background:var(--blue);color:white}
+main{max-width:1250px;margin:22px auto;padding:0 16px}.page{display:none}.page.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:13px;margin-bottom:18px}
+.stat,.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:0 3px 12px #1a355008}
+.stat small{color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:9px;color:var(--navy)}
+.panel{margin-bottom:16px}.panel h2{font-size:18px;margin:0 0 15px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:135px}
+label{font-size:13px;color:#526174}input,select{border:1px solid #d6dee8;border-radius:8px;padding:11px;font:inherit;background:white;min-width:0;width:100%}
+button{font-family:inherit;cursor:pointer}.btn{border:0;border-radius:8px;padding:11px 16px;background:var(--blue);color:white;font:inherit}.btn.gold{background:var(--gold);color:#182a40}.btn.gray{background:#e9eef4;color:#33465c}.btn.red{background:var(--red)}.btn.green{background:var(--green)}
+table{width:100%;border-collapse:collapse;min-width:570px}th,td{text-align:right;padding:11px 9px;border-bottom:1px solid var(--line);font-size:14px}th{color:#627186;background:#f8fafc}
+.table-wrap{overflow:auto}.empty{text-align:center;color:#8a96a5;padding:25px}
+.layout{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:9px}
+.product{border:1px solid var(--line);background:#fbfcfe;border-radius:10px;padding:13px;text-align:right}.product b{display:block;margin-bottom:7px}.product span{color:var(--green);font-size:13px}
+.total{display:flex;justify-content:space-between;font-size:19px;font-weight:bold;padding:15px 0}
+.hint{color:var(--muted);font-size:12px;line-height:1.7}.tag{display:inline-block;background:#eef4fb;color:#315d8a;padding:4px 8px;border-radius:20px;font-size:12px}
+footer{text-align:center;color:#8290a0;padding:20px;font-size:12px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}header{padding:16px}.brand h1{font-size:21px}}
+@media print{header,nav,.no-print,footer{display:none!important}body{background:white}.page{display:none!important}#sales{display:block!important}.panel{border:0;box-shadow:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">خ</div><div><h1>الخزندار</h1><p>نظام إدارة المبيعات والمخزون</p></div></div>
+ <div class="date" id="today"></div>
+</header>
+<nav class="no-print">
+ <button class="active" data-page="home">الرئيسية</button>
+ <button data-page="sales">فاتورة بيع</button>
+ <button data-page="products">الأصناف والمخزون</button>
+ <button data-page="history">سجل المبيعات</button>
+ <button data-page="reports">التقارير</button>
+</nav>
+<main>
+<section id="home" class="page active">
+ <div class="cards">
+  <div class="stat"><small>مبيعات اليوم</small><strong id="todaySales">0.00</strong></div>
+  <div class="stat"><small>عدد فواتير اليوم</small><strong id="todayCount">0</strong></div>
+  <div class="stat"><small>عدد الأصناف</small><strong id="productCount">0</strong></div>
+  <div class="stat"><small>قيمة المخزون التقريبية</small><strong id="stockValue">0.00</strong></div>
+ </div>
+ <div class="panel"><h2>مرحباً بك في الخزندار</h2><p>من هنا يمكنك تسجيل المبيعات، وإدارة المشروبات الباردة وكروت الإنترنت والبضاعة المتنوعة، ومراجعة حسابات المحل.</p><p class="hint">ابدأ بإضافة أصنافك وأسعارها من صفحة «الأصناف والمخزون»، ثم افتح «فاتورة بيع» لتسجيل أول عملية.</p></div>
+ <div class="panel"><h2>تنبيهات المخزون</h2><div id="lowStock" class="hint">لا توجد أصناف حالياً.</div></div>
+</section>
+<section id="sales" class="page">
+ <div class="layout">
+  <div class="panel"><h2>اختيار الأصناف</h2><div class="field" style="margin-bottom:12px"><label>بحث عن صنف</label><input id="saleSearch" placeholder="اكتب اسم الصنف..." oninput="renderSaleProducts()"></div><div id="saleProducts" class="product-grid"></div></div>
+  <div class="panel"><h2>الفاتورة الحالية</h2><div class="field" style="margin-bottom:12px"><label>اسم الزبون (اختياري)</label><input id="customer" placeholder="زبون نقدي"></div><div class="table-wrap"><table><thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th></th></tr></thead><tbody id="cartBody"></tbody></table></div><div class="total"><span>الإجمالي</span><span id="cartTotal">0.00</span></div><div class="row no-print"><button class="btn green" onclick="completeSale()">حفظ الفاتورة</button><button class="btn gray" onclick="clearCart()">تفريغ</button></div><p class="hint">العملة: أدخل الأسعار بعملتك المحلية. يتم حفظ البيانات على هذا الجهاز والمتصفح.</p></div>
+ </div>
+</section>
+<section id="products" class="page">
+ <div class="panel"><h2>إضافة صنف جديد</h2><div class="row">
+  <div class="field"><label>اسم الصنف</label><input id="pName" placeholder="مثال: مياه صغيرة"></div>
+  <div class="field"><label>التصنيف</label><select id="pType"><option>مشروبات باردة</option><option>كروت إنترنت</option><option>بضاعة متنوعة</option></select></div>
+  <div class="field"><label>سعر البيع</label><input id="pPrice" type="number" min="0" step="0.01" placeholder="0.00"></div>
+  <div class="field"><label>الكمية بالمخزون</label><input id="pQty" type="number" min="0" step="1" placeholder="0"></div>
+  <button class="btn gold" onclick="addProduct()">إضافة الصنف</button>
+ </div><p class="hint">للكروت التي لا تتابع كميتها، اترك كمية كبيرة أو حدّثها يدوياً حسب المتوفر.</p></div>
+ <div class="panel"><h2>قائمة الأصناف</h2><div class="table-wrap"><table><thead><tr><th>الصنف</th><th>التصنيف</th><th>سعر البيع</th><th>المخزون</th><th>إجراء</th></tr></thead><tbody id="productsBody"></tbody></table></div></div>
+</section>
+<section id="history" class="page"><div class="panel"><h2>سجل الفواتير</h2><div class="table-wrap"><table><thead><tr><th>رقم</th><th>التاريخ</th><th>الزبون</th><th>الأصناف</th><th>الإجمالي</th></tr></thead><tbody id="historyBody"></tbody></table></div></div></section>
+<section id="reports" class="page"><div class="cards"><div class="stat"><small>إجمالي المبيعات الكلي</small><strong id="allSales">0.00</strong></div><div class="stat"><small>عدد الفواتير الكلي</small><strong id="allCount">0</strong></div><div class="stat"><small>إجمالي الكميات المباعة</small><strong id="unitsSold">0</strong></div></div><div class="panel"><h2>ملخص حسب التصنيف</h2><div id="categoryReport" class="hint"></div><div class="row no-print" style="margin-top:18px"><button class="btn gray" onclick="exportData()">تصدير نسخة احتياطية</button><label class="btn gray" style="display:inline-block">استيراد نسخة<input type="file" accept="application/json" onchange="importData(event)" hidden></label><button class="btn red" onclick="resetData()">مسح جميع البيانات</button></div><p class="hint">احتفظ بنسخة احتياطية بشكل دوري. البيانات محفوظة محلياً في المتصفح ولا تنتقل تلقائياً إلى جهاز آخر.</p></div></section>
+</main>
+<footer>الخزندار © — برنامج مبيعات محلي</footer>
+<script>
+const KEY='alkhazandar_v1';
+let db=JSON.parse(localStorage.getItem(KEY)||'{"products":[],"sales":[]}'),cart=[];
+const money=n=>(Number(n)||0).toFixed(2);
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(db));refresh()};
+document.getElementById('today').textContent=new Date().toLocaleDateString('ar',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');refresh()});
+function addProduct(){let name=pName.value.trim(),price=Number(pPrice.value),qty=Number(pQty.value);if(!name||pPrice.value===''||price<0||pQty.value===''||qty<0||!Number.isInteger(qty)){alert('أدخل اسم الصنف والسعر والكمية بشكل صحيح');return}db.products.push({id:Date.now()+Math.random(),name,type:pType.value,price,qty});pName.value='';pPrice.value='';pQty.value='';save()}
+function renderProducts(){productsBody.innerHTML=db.products.map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.type)}</td><td>${money(p.price)}</td><td>${p.qty}</td><td><button class="btn gray" onclick="editProduct('${p.id}')">تعديل</button> <button class="btn red" onclick="deleteProduct('${p.id}')">حذف</button></td></tr>`).join('')||'<tr><td colspan="5" class="empty">لا توجد أصناف مضافة</td></tr>'}
+function editProduct(id){let p=db.products.find(x=>String(x.id)===id);if(!p)return;let price=prompt('سعر البيع الجديد:',p.price);if(price===null)return;let qty=prompt('الكمية الجديدة:',p.qty);if(qty===null)return;if(price===''||Number(price)<0||qty===''||Number(qty)<0||!Number.isInteger(Number(qty))){alert('قيمة غير صحيحة');return}p.price=Number(price);p.qty=Number(qty);save()}
+function deleteProduct(id){if(confirm('حذف هذا الصنف؟')){db.products=db.products.filter(p=>String(p.id)!==id);cart=cart.filter(c=>String(c.id)!==id);save();renderCart()}}
+function renderSaleProducts(){let q=saleSearch.value.trim().toLowerCase();saleProducts.innerHTML=db.products.filter(p=>p.name.toLowerCase().includes(q)).map(p=>`<button class="product" onclick="addCart('${p.id}')" ${p.qty<=0?'disabled':''}><b>${esc(p.name)}</b><span>${money(p.price)}</span><div class="hint">المتوفر: ${p.qty}</div></button>`).join('')||'<div class="empty">أضف أصنافاً من صفحة المخزون أولاً</div>'}
+function addCart(id){let p=db.products.find(x=>String(x.id)===id);if(!p)return;let c=cart.find(x=>String(x.id)===id);if((c?.qty||0)>=p.qty){alert('الكمية المطلوبة أكبر من المخزون');return}if(c)c.qty++;else cart.push({id:p.id,qty:1});renderCart()}
+function changeQty(id,delta){let c=cart.find(x=>String(x.id)===id),p=db.products.find(x=>x.id===c?.id);if(!c||!p)return;c.qty+=delta;if(c.qty<=0)cart=cart.filter(x=>x!==c);if(c.qty>p.qty)c.qty=p.qty;renderCart()}
+function renderCart(){cartBody.innerHTML=cart.map(c=>{let p=db.products.find(x=>x.id===c.id);return p?`<tr><td>${esc(p.name)}</td><td><button class="btn gray" onclick="changeQty('${p.id}',-1)">−</button> ${c.qty} <button class="btn gray" onclick="changeQty('${p.id}',1)">+</button></td><td>${money(p.price*c.qty)}</td><td><button class="btn red" onclick="changeQty('${p.id}',-${c.qty})">×</button></td></tr>`:''}).join('')||'<tr><td colspan="4" class="empty">الفاتورة فارغة</td></tr>';cartTotal.textContent=money(cart.reduce((s,c)=>s+(db.products.find(p=>p.id===c.id)?.price||0)*c.qty,0))}
+function clearCart(){cart=[];renderCart()}
+function completeSale(){if(!cart.length){alert('الفاتورة فارغة');return}for(let c of cart){let p=db.products.find(x=>x.id===c.id);if(!p||p.qty<c.qty){alert('راجع المخزون للصنف: '+(p?.name||''));return}}let items=cart.map(c=>{let p=db.products.find(x=>x.id===c.id);p.qty-=c.qty;return {name:p.name,type:p.type,qty:c.qty,price:p.price}});let total=items.reduce((s,x)=>s+x.qty*x.price,0);db.sales.unshift({id:db.sales.length?Math.max(...db.sales.map(s=>s.id))+1:1,date:new Date().toISOString(),customer:customer.value.trim()||'زبون نقدي',items,total});cart=[];customer.value='';save();renderCart();alert('تم حفظ الفاتورة بنجاح. الإجمالي: '+money(total))}
+function renderHistory(){historyBody.innerHTML=db.sales.map(s=>`<tr><td>#${s.id}</td><td>${new Date(s.date).toLocaleString('ar')}</td><td>${esc(s.customer)}</td><td>${s.items.map(i=>esc(i.name)+' × '+i.qty).join('، ')}</td><td>${money(s.total)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">لا توجد مبيعات بعد</td></tr>'}
+function refresh(){let start=new Date();start.setHours(0,0,0,0);let todays=db.sales.filter(s=>new Date(s.date)>=start);todaySales.textContent=money(todays.reduce((a,s)=>a+s.total,0));todayCount.textContent=todays.length;productCount.textContent=db.products.length;stockValue.textContent=money(db.products.reduce((a,p)=>a+p.price*p.qty,0));lowStock.innerHTML=db.products.filter(p=>p.qty<=5).map(p=>`<span class="tag">${esc(p.name)}: ${p.qty}</span>`).join(' ')||'لا توجد أصناف منخفضة المخزون.';allSales.textContent=money(db.sales.reduce((a,s)=>a+s.total,0));allCount.textContent=db.sales.length;unitsSold.textContent=db.sales.reduce((a,s)=>a+s.items.reduce((n,i)=>n+i.qty,0),0);let cats={};db.sales.forEach(s=>s.items.forEach(i=>cats[i.type]=(cats[i.type]||0)+i.qty*i.price));categoryReport.innerHTML=Object.keys(cats).map(k=>`<p>${esc(k)}: <b>${money(cats[k])}</b></p>`).join('')||'لا توجد بيانات مبيعات.';renderProducts();renderSaleProducts();renderHistory()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='نسخة-الخزندار-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.products)||!Array.isArray(d.sales))throw 0;if(confirm('استبدال البيانات الحالية بالنسخة المختارة؟')){db=d;save();alert('تم الاستيراد')}}catch(_){alert('ملف النسخة غير صالح')}};r.readAsText(f)}
+function resetData(){if(confirm('تحذير: سيتم حذف جميع الأصناف والفواتير نهائياً. هل أنت متأكد؟')&&confirm('تأكيد أخير: هل تريد المسح؟')){db={products:[],sales:[]};cart=[];save();renderCart()}}
+refresh();renderCart();
+</script>
+</body></html>
